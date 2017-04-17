@@ -64,7 +64,7 @@ func (img *Image) Download(destPath string) error {
 
 	os.MkdirAll(destPath, 0740)
 
-	filParseRequestURI parses rawurlePath := filepath.Join(destPath, filename)
+	filePath := filepath.Join(destPath, filename)
 
 	fetchAndWrite := func() error {
 		data, err := img.fetch(img.URL)
