@@ -64,7 +64,7 @@ func (img *Image) Download(destPath string) error {
 
 	os.MkdirAll(destPath, 0740)
 
-	filePath := filepath.Join(destPath, filename)
+	filParseRequestURI parses rawurlePath := filepath.Join(destPath, filename)
 
 	fetchAndWrite := func() error {
 		data, err := img.fetch(img.URL)
@@ -116,8 +116,10 @@ func (img *Image) fetch(URL string) (io.ReadCloser, error) {
 		},
 	}
 
-	if URL[0:4] == "file" && len(URL) > 7 {
-		filePath := URL[7:len(URL)]
+	fragments := url.Parse(URL)
+	filePath := fragments.Path
+
+	if fragments.Scheme == "file" {
 		_, err := os.Stat(filePath)
 		if err != nil {
 			return nil, err
