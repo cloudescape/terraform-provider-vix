@@ -116,6 +116,17 @@ func (img *Image) fetch(URL string) (io.ReadCloser, error) {
 		},
 	}
 
+	if URL[0:4] == "file" && len(URL) > 7 {
+		filePath := URL[7:len(URL)]
+		_, err := os.Stat(filePath)
+		if err != nil {
+			return nil, err
+		}
+		t := &http.Transport{}
+		t.RegisterProtocol("file", http.NewFileTransport(http.Dir("/")))
+		client = &http.Client{Transport: t}
+	}
+
 	resp, err := client.Get(URL)
 	if err != nil {
 		return nil, err
