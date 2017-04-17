@@ -116,10 +116,10 @@ func (img *Image) fetch(URL string) (io.ReadCloser, error) {
 		},
 	}
 
-	fragments := url.Parse(URL)
-	filePath := fragments.Path
+	fragments, err := url.Parse(URL)
 
-	if fragments.Scheme == "file" {
+	if err == nil && fragments.Scheme == "file" {
+		filePath := fragments.Path
 		_, err := os.Stat(filePath)
 		if err != nil {
 			return nil, err
