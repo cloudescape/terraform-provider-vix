@@ -161,6 +161,7 @@ func (v *VM) Create() (string, error) {
 
 		if len(files) == 0 {
 			return "", fmt.Errorf("[ERROR] vmx file was not found: %s", pattern)
+		}
 	}
 
 	vmxFile := files[0]
