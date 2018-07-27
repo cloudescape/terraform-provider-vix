@@ -154,7 +154,13 @@ func (v *VM) Create() (string, error) {
 	files, _ := filepath.Glob(pattern)
 
 	if len(files) == 0 {
-		return "", fmt.Errorf("[ERROR] vmx file was not found: %s", pattern)
+		// Try another patthern match. MacOS in particular seems to not understand the pattern above when
+		// there are subdirectories involved
+		pattern := filepath.Join(goldPath, "**/*.vmx")
+		files, _ = filepath.Glob(pattern)
+
+		if len(files) == 0 {
+			return "", fmt.Errorf("[ERROR] vmx file was not found: %s", pattern)
 	}
 
 	vmxFile := files[0]
