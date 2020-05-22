@@ -113,13 +113,21 @@ func (v *VM) SetDefaults() {
 func (v *VM) Create() (string, error) {
 	log.Printf("[DEBUG] Creating VM resource...")
 
+	// Assign the image to a local variable so we can access its
+	// members easier
+	image := v.Image
+
+	// Get the current user as we'll use this to get the working directory
 	usr, err := user.Current()
 	if err != nil {
 		return "", err
 	}
 
-	image := v.Image
-	goldPath := filepath.Join(usr.HomeDir, filepath.Join(".terraform/vix/gold", image.Checksum))
+	// Assign a working directory that we'll use for everything
+	workingDir := filepath.Join(usr.HomeDir, ".terraform", "vix")
+
+	// Build the path that we'll download our original virtual machine to
+	goldPath := filepath.Join(workingDir, "gold", image.Checksum)
 	_, err = os.Stat(goldPath)
 	finfo, _ := ioutil.ReadDir(goldPath)
 	goldPathEmpty := len(finfo) == 0
@@ -127,8 +135,7 @@ func (v *VM) Create() (string, error) {
 	if os.IsNotExist(err) || goldPathEmpty {
 		log.Println("[DEBUG] Gold virtual machine does not exist or is empty")
 
-		imgPath := filepath.Join(usr.HomeDir, ".terraform/vix/images", image.Checksum)
-		if err = image.Download(imgPath); err != nil {
+		if err = image.Download(workingDir); err != nil {
 			return "", err
 		}
 		defer image.file.Close()
@@ -175,7 +182,7 @@ func (v *VM) Create() (string, error) {
 		return "", err
 	}
 
-	baseVMDir := filepath.Join(usr.HomeDir, ".terraform", "vix", "vms",
+	baseVMDir := filepath.Join(workingDir, "vms",
 		image.Checksum, v.Name)
 
 	newvmx := filepath.Join(baseVMDir, v.Name+".vmx")

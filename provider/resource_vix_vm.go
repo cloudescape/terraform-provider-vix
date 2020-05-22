@@ -90,11 +90,11 @@ func resourceVIXVM() *schema.Resource {
 						},
 						"checksum": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"checksum_type": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"password": &schema.Schema{
 							Type:     schema.TypeString,
